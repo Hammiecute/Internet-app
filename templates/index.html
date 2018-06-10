@@ -1,21 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Internet app</title>
+  <title>Internet App</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-  <div>
-    <p>Internet app is live!</p>
-    <form method="POST">
-      Enter current location: <input type="text" name="location"> <br>
-      Enter your network: <input type="text" name="network"> <br>
-      What are you using it for? <input type="text" name="network-use"> <br>
-      Rating <input type="text" name="rating"> <br>
-      <input type="submit" value="Submit Data">
+
+  <div class="page">
+
+    <h1>Internet App</h1>
+    <div class="metanav">
+      {% if not session.logged_in %}
+      <a href="{{ url_for('login') }}">log in</a>
+      {% else %}
+      <a href="{{ url_for('logout') }}">log out</a>
+      {% endif %}
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %} {% block body %}{% endblock %} {% if session.logged_in %}
+    <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
+      <dl>
+        <dt>Location:</dt>
+        <dd>
+          <select name="location">
+            <option value="Lagos">Lagos</option>
+            <option value="Abuja">Abuja</option>
+            <option value="Abia">Abia</option>
+            <option value="Kano">Kano</option>
+          </select>
+        </dd>
+        <br>
+        <dt>Network:</dt>
+        <dd>
+          <input type="radio" name="network" value="Mtn" checked> Mtn
+          <br>
+          <input type="radio" name="network" value="Glo"> Glo
+          <br>
+          <input type="radio" name="network" value="Spectranet"> Spectranet
+          <br>
+          <input type="radio" name="network" value="9mobile"> 9mobile
+        </dd>
+        <br>
+        <dt>Network use:</dt>
+        <dd>
+          <input type="radio" name="network_use" value="Calls" checked> Calls
+          <br>
+          <input type="radio" name="network_use" value="Videos"> Videos
+          <br>
+          <input type="radio" name="network_use" value="Streaming"> Streaming
+        </dd>
+        <br>
+        <dt>Rating:</dt>
+        <dd>
+          <input type="radio" name="rating" value="1" checked> 1
+          <br>
+          <input type="radio" name="rating" value="2"> 2
+          <br>
+          <input type="radio" name="rating" value="3"> 3
+        </dd>
+        <dd>
+          <br>
+          <input type="submit" value="Submit">
+        </dd>
+      </dl>
     </form>
+    {% endif %}
+    <ul class="entries">
+      {% for entry in entries %}
+      <li class="entry">
+        <h2 id="{{ entry.id }}">{{ entry.user_location }}</h2>
+        {{ entry.user_network|safe }} {{ entry.network_use|safe }} {{ entry.rating | safe }}
+      </li>
+      {% else %}
+      <li>
+        <em>No entries yet. Add some!</em>
+      </li>
+      {% endfor %}
+    </ul>
+
   </div>
+
 </body>
+
 </html>
